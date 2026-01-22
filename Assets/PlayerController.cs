@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +8,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float speed = 5.0f;
     Rigidbody2D rb;
     bool isGrounded;
+
+    int numAirJumps = 1;
+    [SerializeField] int maxAirJumps = 1;
 
     int score = 0;
 
@@ -33,6 +35,11 @@ public class PlayerController : MonoBehaviour
         if (isGrounded)
         {
             rb.AddForce(new Vector2(0, 300));
+        }
+        else if (numAirJumps > 0)
+        {
+            rb.AddForce(new Vector2(0, 300));
+            numAirJumps --;
         }
     }
 
@@ -61,6 +68,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            numAirJumps = maxAirJumps;
         }
     }
 
