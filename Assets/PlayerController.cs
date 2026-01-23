@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     float movementY;
     [SerializeField] float speed = 5.0f;
     Rigidbody2D rb;
+    Animator animator;
+    SpriteRenderer spriteRenderer;
     bool isGrounded;
 
     int numAirJumps = 1;
@@ -18,6 +20,8 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -28,6 +32,16 @@ public class PlayerController : MonoBehaviour
 
         // transform.position = new Vector2(transform.position.x + movementDistanceX, transform.position.y + movementDistanceY);
         rb.linearVelocity = new Vector2(movementX * speed, rb.linearVelocity.y);
+
+        if (!Mathf.Approximately(movementX, 0f))
+        {
+            animator.SetBool("isRunning", true);
+            spriteRenderer.flipX = movementX < 0;
+        }
+        else
+        {
+            animator.SetBool("isRunning", false);
+        }
     }
 
     void OnJump()
@@ -35,6 +49,7 @@ public class PlayerController : MonoBehaviour
         if (isGrounded)
         {
             rb.AddForce(new Vector2(0, 300));
+            animator.SetBool("isJumping", true);
         }
         else if (numAirJumps > 0)
         {
@@ -69,6 +84,7 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
             numAirJumps = maxAirJumps;
+            animator.SetBool("isJumping", false);
         }
     }
 
