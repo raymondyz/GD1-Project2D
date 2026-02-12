@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,7 +15,13 @@ public class PlayerController : MonoBehaviour
     int numAirJumps = 1;
     [SerializeField] int maxAirJumps = 1;
 
+    [SerializeField] AudioSource source;
+    [SerializeField] AudioClip jumpClip;
+    [SerializeField] GameManager gameManager;
+
     int score = 0;
+
+    public UnityEvent playerDeath;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -50,6 +57,7 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(new Vector2(0, 300));
             animator.SetBool("isJumping", true);
+            source.PlayOneShot(jumpClip);
         }
         else if (numAirJumps > 0)
         {
@@ -75,6 +83,12 @@ public class PlayerController : MonoBehaviour
         {
             score ++;
             collision.gameObject.SetActive(false);
+
+            gameManager.UpdateScore(score);
+        }
+        else if (collision.gameObject.CompareTag("Spike"))
+        {
+            playerDeath.Invoke();
         }
     }
 
